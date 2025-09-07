@@ -1,6 +1,6 @@
-# Tutorial on how to get your Windows EFI back!!
+# A quick and short guide on how to get your Windows EFI back!!
 
-*A guide by KaayZouee.*
+*by KaayZouee, for Nix (and maybe, Linux) fans.*
 
 Have you ever accidentally formatted your **`nvme0n1p1`** while installing a Linux distro?
 That sounds really horrible!!
@@ -8,7 +8,7 @@ But don’t worry, I gotchu.
 
 ⚠️ **Disclaimer:** This guide only restores the **EFI boot partition**. If you accidentally formatted or deleted your main Windows partition (for example, `nvme0n1p3` in my case), your data may be unrecoverable with this method.
 Your hardware and OS may behave differently, so results are not guaranteed.
-
+> Please make sure you have read [this guide](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/repair-the-boot-menu-on-a-dual-boot-pc?view=windows-11) and also [this](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/bcdboot-command-line-options-techref-di?view=windows-11).
 ---
 
 ## Step 1: Download the Windows ISO
@@ -54,105 +54,120 @@ You should now see the Windows installer screen.
 
 ---
 
-## Step 4: Open Command Prompt
+## Step 4: Enter Windows Recovery Environment (WinRE)
 
-* On the Windows setup screen, don’t click *Install now*.
-* Instead, press **Shift + F10** → this opens a **Command Prompt**.
+Instead of clicking *Install now*, click **Repair your PC** (bottom-left).
 
----
+This opens **Windows Recovery Environment (WinRE)**.
+Here you can run:
 
-## Step 5: Recreate the EFI Partition
+* **Startup Repair** (recommended if you want the simplest fix)
+* **System Restore** (if you have a restore point)
+* **Command Prompt** (manual repair steps below)
 
-If your EFI partition (`nvme0n1p1`) is completely wiped, you need to recreate it.
-
-1. Launch `diskpart`:
-
-   ```cmd
-   diskpart
-   ```
-2. List your disks:
-
-   ```cmd
-   list disk
-   ```
-
-   Identify your main disk (usually `Disk 0`).
-3. Select your disk:
-
-   ```cmd
-   select disk 0
-   ```
-4. List partitions:
-
-   ```cmd
-   list partition
-   ```
-5. Create a new EFI partition (100MB is enough):
-
-   ```cmd
-   create partition efi size=100
-   format quick fs=fat32
-   assign letter=S
-   exit
-   ```
-
-Now you have a clean EFI partition mounted as `S:`.
+> Note: Using WinRE is safer because it won’t touch your files unless you explicitly reinstall Windows.
 
 ---
 
-## Step 6: Repair Boot Files
+## Step 5: Prepare the EFI Partition
 
-Run the following commands:
+Open **Command Prompt** from:
+*Repair → Troubleshoot → Command Prompt*
+
+Run the following:
 
 ```cmd
-bcdboot C:\Windows /s S: /f UEFI
+diskpart
+list disk
+sel disk 0          # If your Windows is on Disk 0 — pick the correct one!
+list vol
 ```
 
-Explanation:
+Look for the **EFI System Partition** (usually 100–300MB, FAT32).
+Suppose it’s **Volume 3**, then:
 
-* `C:\Windows` → your Windows system partition (usually C:).
-* `/s S:` → tells Windows to copy boot files to the EFI partition (S:).
-* `/f UEFI` → ensures the system boots in UEFI mode.
+```cmd
+sel vol 3
+assign letter=Z
+exit
+```
 
-If successful, it should say:
-**Boot files successfully created.**
+Now the EFI partition is mounted as `Z:`.
 
 ---
 
-## Step 7: Reboot
+## Step 6: Identify Your Windows Partition
+
+Check which drive letter contains Windows:
+
+```cmd
+dir C:\
+```
+
+If you see folders like `Windows`, `Program Files`, `Users`, then `C:` is correct.
+If not, try `dir D:\`, `dir E:\`, etc. until you find your Windows install.
+
+---
+
+## Step 7: Repair Boot Configuration
+
+Run the following commands in order:
+
+```cmd
+bootrec /fixmbr
+bootrec /scanos
+bootrec /rebuildbcd
+```
+* `bootrec /fixmbr` → rewrites the Master Boot Record (safe for UEFI systems).
+* `bootrec /scanos` → scans for Windows installations.
+* `bootrec /rebuildbcd` → rebuilds the Boot Configuration Data (BCD).
+
+  * If it finds Windows (like `C:\Windows`), it will ask:
+    *“Do you want to add this installation to the boot list (Y/N/A)?”*
+  * Press `Y` to include it.
+
+Finally, repair the EFI boot files with:
+
+```cmd
+bcdboot C:\Windows /s Z: /f UEFI
+```
+* `C:\Windows` → tells **bcdboot** where your Windows system files are.
+* `/s Z:` → specifies the EFI System Partition (ESP) mounted as `Z:`.
+* `/f UEFI` → forces creation of UEFI-style boot entries.
+
+⚠️ **Important:**
+Make sure `Z:` is indeed the EFI partition (\~100–300MB, FAT32, usually hidden).
+Pointing to the wrong partition could overwrite another EFI loader (e.g., Linux GRUB).
+
+---
+
+## Step 8: Reboot
 
 Close Command Prompt, remove the USB, and reboot.
-If everything worked, your Windows bootloader should be back!
+If all went well, Windows should boot normally again. 🎉
 
 ---
 
-## Optional: Dual Boot with Linux
-
+## Step 9 (Optional): Dual Boot with Linux
+> On my laptop, it already run without step 9, but if you still can't open windows after step 8, try this.
 If you’re dual booting:
 
-* Boot back into Linux.
-* Run:
-
-  ```bash
-  sudo update-grub
-  ```
-
-  or regenerate your bootloader config (depending on your distro, e.g., `grub-mkconfig` on Arch, `nixos-rebuild` on NixOS).
-
-This ensures GRUB detects Windows again.
-
+* Boot into Linux.
+* Update your bootloader so it detects Windows again. 
 ---
+**NixOS:**
 
+```
+sudo nixos-rebuild switch
+```
 ## Troubleshooting
 
-* If `bcdboot` fails, check that:
-
-  * Your Windows partition is still intact.
-  * The EFI partition is formatted as FAT32.
-* If Windows doesn’t boot, go back to USB and run **Startup Repair** from the Windows installer.
+* If `bootrec /rebuildbcd` doesn’t find your Windows installation, make sure your partition is healthy and not corrupted.
+* If Windows still won’t boot, try **Startup Repair** from WinRE.
+* If the EFI partition was completely destroyed, you may need to **recreate it** manually (see advanced section in Microsoft docs).
 
 ---
 
-✅ And that’s it. Your Windows EFI is restored without reinstalling the whole OS!
+✅ Done. Your Windows EFI bootloader should now be restored!
 
 ---
