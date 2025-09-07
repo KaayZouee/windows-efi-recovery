@@ -31,7 +31,7 @@ Example:
 
 ## Step 2: Create a Bootable USB
 
-We’ll use **WoeUSB** to flash the ISO. You can use other tools (Rufus on Windows, balenaEtcher, etc.), but here’s the NixOS way:
+We’ll use **WoeUSB** to flash the ISO. You can use other tools ([Rufus](https://github.com/pbatard/rufus/tree/master) on Windows, [balenaEtcher](https://github.com/balena-io/etcher), etc.), but here’s the NixOS way:
 
 ```bash
 nix-shell -p woeusb ntfs3g --run \
@@ -149,15 +149,14 @@ If all went well, Windows should boot normally again. 🎉
 
 ---
 
-## Step 9 (Optional): Dual Boot with Linux
+## Step 9 (Optional): Dual Boot with Linu
 > On my laptop, it already run without step 9, but if you still can't open windows after step 8, try this.
 If you’re dual booting:
 
 * Boot into Linux.
-* Update your bootloader so it detects Windows again. 
----
-**NixOS:**
+* Update your bootloader so it detects Windows again.
 
+**NixOS:**
 ```
 sudo nixos-rebuild switch
 ```
