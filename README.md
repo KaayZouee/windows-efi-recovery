@@ -1,6 +1,7 @@
 # A quick and short guide on how to get your Windows EFI back!!
 
 *by KaayZouee, for Nix (and maybe, Linux) fans.*
+*Yes, I used GPT to rewrite my guide, FIGHT ME.*
 
 Have you ever accidentally formatted your **`nvme0n1p1`** while installing a Linux distro?
 That sounds really horrible!!
