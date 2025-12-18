@@ -27,6 +27,7 @@ Example:
 /home/kay/Downloads/Win11_24H2_EnglishInternational_x64.iso
 ```
 
+⚠️**WARNING:** The newest version of Windows is 25H2. If your Windows is 25H2, then choose the right version! Choosing the wrong version may lead to bugs.
 ---
 
 ## Step 2: Create a Bootable USB
