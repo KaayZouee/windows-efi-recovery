@@ -152,7 +152,7 @@ If all went well, Windows should boot normally again. 🎉
 
 ---
 
-## Step 9 (Optional): Dual Boot with Linu
+## Step 9 (Optional): Dual Boot with Linux
 > On my laptop, it already run without step 9, but if you still can't open windows after step 8, try this.
 If you’re dual booting:
 
