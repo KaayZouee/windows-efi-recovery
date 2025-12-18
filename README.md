@@ -38,6 +38,8 @@ nix-shell -p woeusb ntfs3g --run \
 "sudo woeusb --device /home/kay/Downloads/Win11_24H2_EnglishInternational_x64.iso /dev/sda"
 ```
 
+Replace `kay` with your username on Linux.
+
 ⚠️ **Warning:** This will erase everything on `/dev/sda` (your USB drive). Backup first.
 
 When it finishes, unmount the USB safely. Now reboot your computer.
