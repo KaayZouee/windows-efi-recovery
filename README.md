@@ -32,11 +32,19 @@ Example:
 
 ## Step 2: Create a Bootable USB
 
-We’ll use **WoeUSB** to flash the ISO. You can use other tools ([Rufus](https://github.com/pbatard/rufus/tree/master) on Windows, [balenaEtcher](https://github.com/balena-io/etcher), etc.), but here’s the NixOS way:
+We’ll use **WoeUSB** to flash the ISO. You can use other tools ([Rufus](https://github.com/pbatard/rufus/tree/master) on Windows, [balenaEtcher](https://github.com/balena-io/etcher), etc.):
+
+### NixOS:
 
 ```bash
 nix-shell -p woeusb ntfs3g --run \
 "sudo woeusb --device /home/kay/Downloads/Win11_24H2_EnglishInternational_x64.iso /dev/sda"
+```
+
+### Other distros (for example, Arch Linux):
+
+```bash
+sudo woeusb --device /home/kay/Downloads/Win11_24H2_EnglishInternational_x64.iso /dev/sda
 ```
 
 Replace `kay` with your username on Linux.
