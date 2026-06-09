@@ -14,9 +14,9 @@ Your hardware and OS may behave differently, so results are not guaranteed.
 
 ## Step 1: Download the Windows ISO
 You’ll need a Windows installation ISO to repair EFI.
-> Since windows already blocked me from downloading their ISO, I used this website. It seems legit, I guess... If you can, just grab the iso directly from the Windows website for extra secure.
 
-* Go to [msdl.gravesoft.dev](https://msdl.gravesoft.dev/) to get the official ISO download links.
+* Go to https://www.microsoft.com/en-us/software-download to get the official ISO download links.
+> Windows pages usually block users. This can be bypassed by simply using a VPN. If you can't download an ISO, open Issues and tell me your version, I'll send the ISO to you.
 * If you’re on an Intel/AMD laptop/desktop, select the standard Windows 11 build (ignore ARM unless you specifically use an ARM-based device like Surface Pro X).
 * Pick your product language (e.g., English International).
 * Click the blue download link (something like **Windows 11 24H2 English International**) and wait for the download to complete.
