@@ -59,7 +59,7 @@ When it finishes, unmount the USB safely. Now reboot your computer.
 
 * As your PC restarts, enter the **boot menu** (usually `Esc`, `F2`, `F12`, or `Del`, depending on your manufacturer).
 
-  * Example: On my Asus Vivobook S14, I spam **Esc** and hold **F2**.
+  * Example: On my Asus Vivobook S14, I hold **Esc** right when I see the Asus logo appears.
 * Choose the USB device to boot.
 
 You should now see the Windows installer screen.
